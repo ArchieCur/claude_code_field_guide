@@ -1,0 +1,45 @@
+{
+  // CLAUDE CODE SETTINGS TEMPLATE
+  // Location: ~/.claude/settings.json (global) or .claude/settings.json (project)
+  // Project settings override global settings.
+  // Remove comments before use — JSON does not support comments.
+
+  // ── Model ──────────────────────────────────────────────────────────────────
+  // Set your preferred default model.
+  // Current options: claude-opus-4-5, claude-sonnet-4-5, claude-haiku-4-5
+  // Opus = most capable. Sonnet = balanced. Haiku = fastest/cheapest.
+  "model": "claude-sonnet-4-5",
+
+  // ── Permissions ────────────────────────────────────────────────────────────
+  // Control which tools Claude can use without asking for approval.
+  // "allow" = always permit. "deny" = always block.
+  // Uses glob patterns. More specific rules take precedence.
+  "permissions": {
+    "allow": [
+      // Allow reading any file
+      "Read(*)",
+      // Allow running tests
+      "Bash(npm test)",
+      "Bash(pytest)",
+      "Bash(python -m pytest*)"
+    ],
+    "deny": [
+      // Block destructive git operations
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      // Block dropping databases
+      "Bash(npm run db:reset)",
+      "Bash(npx prisma migrate reset*)",
+      // Block rm -rf
+      "Bash(rm -rf*)"
+    ]
+  },
+
+  // ── Environment Variables ──────────────────────────────────────────────────
+  // Inject environment variables into every Claude Code session.
+  // Useful for API keys or project-specific config.
+  // Note: ANTHROPIC_API_KEY is handled separately — set it in your shell.
+  "env": {
+    // "MY_ENV_VAR": "value"
+  }
+}

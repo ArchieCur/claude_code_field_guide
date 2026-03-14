@@ -1,0 +1,45 @@
+[
+  // CLAUDE CODE KEYBINDINGS TEMPLATE
+  // Location: ~/.claude/keybindings.json
+  // Remove comments before use — JSON does not support comments.
+  //
+  // Each binding needs:
+  //   "key"     — the keyboard shortcut
+  //   "command" — the Claude Code command to run
+  //
+  // Chord bindings (two-key sequences) use a space between keys:
+  //   "key": "ctrl+x ctrl+s"
+
+  // ── Suggestion / Completion ────────────────────────────────────────────────
+  {
+    // Accept the current AI suggestion (alternative to Tab)
+    "key": "ctrl+y",
+    "command": "acceptSuggestion"
+  },
+  {
+    // Dismiss the current AI suggestion
+    "key": "escape",
+    "command": "dismissSuggestion"
+  },
+
+  // ── Session Control ────────────────────────────────────────────────────────
+  {
+    // Clear the current conversation and start fresh
+    "key": "ctrl+shift+k",
+    "command": "clear"
+  },
+
+  // ── Common Slash Commands as Shortcuts ─────────────────────────────────────
+  // Tip: You can bind any slash command to a key using runCommand.
+  // These are examples — customize to your own most-used commands.
+  {
+    // Run /commit without typing it
+    "key": "ctrl+shift+c",
+    "command": "runCommand:/commit"
+  },
+  {
+    // Run /review-pr without typing it
+    "key": "ctrl+shift+r",
+    "command": "runCommand:/review-pr"
+  }
+]
