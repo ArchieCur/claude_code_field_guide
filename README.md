@@ -51,6 +51,9 @@ your-project/
 
 ---
 
+v1.0.0 2026-03-13
+Written by Claude Code 
+
 ## Philosophy
 
 Claude Code's power is mostly configuration, not code. The right `CLAUDE.md` prevents the most common mistakes. The right hooks enforce the guardrails your team needs. Slash commands turn your most-used workflows into one keystroke.
