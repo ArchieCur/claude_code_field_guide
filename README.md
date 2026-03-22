@@ -88,4 +88,4 @@ This repo is the copy-paste layer between the course and your real projects.
 ---
 
 *v1.1.0 2026-03-22*
-Written by Claude Code
+Written by Claude Code in collaboration with ArchieCur and Sonnet 4.6
