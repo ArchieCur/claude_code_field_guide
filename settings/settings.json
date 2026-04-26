@@ -6,9 +6,9 @@
 
   // ── Model ──────────────────────────────────────────────────────────────────
   // Set your preferred default model.
-  // Current options: claude-opus-4-5, claude-sonnet-4-5, claude-haiku-4-5
-  // Opus = most capable. Sonnet = balanced. Haiku = fastest/cheapest.
-  "model": "claude-sonnet-4-5",
+  // Current options: claude-opus-4-7, claude-sonnet-4-6, claude-haiku-4-5
+  // Opus = most capable (supports auto mode + effort levels). Sonnet = balanced. Haiku = fastest/cheapest.
+  "model": "claude-opus-4-7",
 
   // ── Permissions ────────────────────────────────────────────────────────────
   // Control which tools Claude can use without asking for approval.

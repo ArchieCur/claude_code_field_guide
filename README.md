@@ -64,9 +64,13 @@ your-project/
 **Configuration and Templates**
 - [CLAUDE.md Templates](CLAUDE_md_templates/) — Instructions Claude reads before every session
 - [Settings](settings/) — Model selection, permissions, environment variables
+  - [Auto Mode](settings/auto_mode.md) — Auto-approve safe commands; reduce prompts with `/fewer-permission-prompts`
+  - [Effort Levels](settings/effort_levels.md) — Tune Opus 4.7's adaptive thinking with `/effort`
+  - [Recaps and Focus Mode](settings/recaps_and_focus.md) — Summaries after long tasks; hide intermediate output with `/focus`
 - [Keybindings](keybindings/) — Custom keyboard shortcuts
 - [Hooks](hooks/) — Scripts that run before/after tool use
 - [Slash Commands](slash_commands/) — Custom `/commands` for repeated workflows
+  - [/go](slash_commands/go.md) — Test, simplify, and open a PR in one shot
 
 **Feature Guides**
 - [Channels](channels/) — React to external events inside a running session
@@ -87,9 +91,11 @@ The features added in v1.1.0 extend this idea further. Channels, Scheduled Tasks
 
 Dispatch completes that picture. With Dispatch, you don't need to be at your desk to assign work. Send a task from your phone, walk away, and come back to results. Pair it with Channels for webhook and chat app triggers, and Claude Code becomes something closer to a background agent than a coding assistant — one you can reach from anywhere and hand off work to at any hour. The configuration layer got bigger. The principle stayed the same.
 
+Opus 4.7 shifts the balance further toward autonomy. Auto mode replaces permission babysitting with a model-based safety classifier. Effort levels replace manual thinking-budget tuning with a single dial. Focus mode and Recaps let you step away from long tasks and return to a clean summary. The `/go` skill closes the loop: test, simplify, ship. The principle is the same as always — configuration over code — but the ceiling on what you can hand off keeps rising.
+
 This repo is the copy-paste layer between the course and your real projects.
 
 ---
 
-*v1.2.0 2026-03-24*
+*v1.3.0 2026-04-26*
 Written by Claude Code in collaboration with ArchieCur and Sonnet 4.6
