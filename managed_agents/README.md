@@ -202,7 +202,7 @@ Full docs: [Subscribe to webhooks](https://code.claude.com/docs/en/managed-agent
 
 ## Coming to the claude_api_cookbook
 
-The Managed Agents API features above — multi-agent sessions, outcomes, dreams, and webhooks — will be documented with full working code examples in the [claude_api_cookbook](https://github.com/ArchieCur/claude_api_cookbook/tree/main/managed_agents) repo. This file is an orientation guide; the cookbook is where the deep implementation patterns live.
+The Managed Agents API features above — multi-agent sessions, outcomes, dreams, and webhooks — are documented with full working code examples in the [claude_api_cookbook](https://github.com/ArchieCur/claude_api_cookbook/tree/main/managed_agents) repo. This file is an orientation guide; the cookbook is where the deep implementation patterns live.
 
 ---
 
