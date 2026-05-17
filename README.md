@@ -109,8 +109,6 @@ The ceiling keeps rising. The principle stays the same.
 
 v2.1.0 brings the field guide to enterprise scale. The central thesis, drawn from Anthropic's Applied AI team's observations across large deployments, is that the harness matters more than the model. Two teams with identical model access but different harness configurations produce dramatically different results. The enterprise section makes this concrete: a build sequence that follows the model's own behavior (CLAUDE.md before hooks, skills before plugins, connectors last), layered CLAUDE.md hierarchies that load the right context without bloating every session, skills and plugins that turn tribal knowledge into distributed infrastructure, and LSP integrations that give Claude symbol-level navigation where text search fails at scale. At enterprise scale, configuration becomes organizational — the right harness isn't just files you write, it's a living system a team owns, reviews on a cadence, and governs deliberately. Cross-functional working groups, designated ownership, and AI code review policies aren't bureaucracy. They're the harness applied to the human layer. The ceiling keeps rising. The principle stays the same.
 
-This repo is the copy-paste layer between the course and your real projects.
-
 ---
 
 *v2.1.0 2026-05-17*
