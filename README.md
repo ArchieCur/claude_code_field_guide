@@ -1,113 +1,95 @@
-# Claude Code Field Guide
+# Enterprise & Large Codebase Guide
 
-A practitioner's reference repo — ready-to-use templates for the files that make Claude Code work in the real world.
+Claude Code runs in production across multi-million-line monorepos, decades-old legacy systems, and organizations with thousands of developers. The challenges at that scale are distinct: build commands that differ per subdirectory, legacy code with no conventional structure, teams who independently rebuild the same tooling, and governance questions that don't arise when it's just you.
 
-Companion to the [Claude Code course on deeplearning.ai](https://www.deeplearning.ai).
-
----
-
-## What's Here and Where It Goes
-
-**Templates and Config** — copy these to your machine
-
-| File/Folder | Where it goes on your machine |
-|---|---|
-| `CLAUDE_md_templates/` | Copy chosen template to your project root as `CLAUDE.md` |
-| `settings/settings.json` | `~/.claude/settings.json` (global) or `.claude/settings.json` (project) |
-| `keybindings/keybindings.json` | `~/.claude/keybindings.json` |
-| `hooks/` | `~/.claude/hooks/` (global) or `.claude/hooks/` (project) |
-| `slash_commands/` | `~/.claude/commands/` (global) or `.claude/commands/` (project) |
-
-> **Global vs. project:** Files in `~/.claude/` apply everywhere. Files in `.claude/` inside a project apply only to that project. Project settings override global ones.
-
-**Feature Guides** — read these, then configure Claude Code
-
-| Folder | What it covers | Relevant path on your machine |
-|---|---|---|
-| `channels/` | Push external events into a running Claude Code session (Telegram, Discord, webhooks, CI) | Configured via `--channels` flag at session start |
-| `dispatch/` | Delegate tasks from your phone to your desktop — and trigger Claude Code via webhooks and external events | Configured via Claude Desktop + mobile app pairing |
-| `scheduled_tasks/` | Run recurring tasks on a schedule — CLI session-scoped (`/loop`) and durable Desktop tasks | CLI tasks: session memory only. Desktop tasks: `~/.claude/scheduled-tasks/` |
-| `remote_control/` | Steer your local Claude Code session from your phone, tablet, or any browser | Configured via `claude --remote-control` or `/remote-control` |
-| `memory/` | How Claude remembers your project — CLAUDE.md vs. auto memory, memory hygiene, subagent memory | Auto memory: `~/.claude/projects/<project>/memory/` |
-| `code_review/` | Multi-agent PR analysis with severity-tagged findings + Auto-fix for live CI failures and review comments | GitHub App + admin setup at [claude.ai/admin-settings/claude-code](https://claude.ai/admin-settings/claude-code) |
-| `routines/` | Cloud-based automation triggered by schedule, API call, or GitHub events — runs when your laptop is closed | Managed at [claude.ai/code/routines](https://claude.ai/code/routines) or `/schedule` in the CLI |
-| `agent_teams/` | Coordinate multiple Claude Code instances with shared tasks and inter-agent messaging | Enable with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json |
-| `managed_agents/` | Managed Agents API orientation — multi-agent sessions, outcomes, dreams, and webhooks for production deployments | Anthropic API with `managed-agents-2026-04-01` beta header |
+This section covers the patterns that work at scale, drawn from Anthropic's Applied AI team's observations across large deployments.
 
 ---
 
-## Quick Reference: Claude Code File Structure
+## The harness matters more than the model
 
-```
-~/.claude/                        # Global config (applies to all projects)
-  settings.json                   # Model, permissions, env vars
-  keybindings.json                # Custom keyboard shortcuts
-  commands/                       # Global slash commands
-    commit.md                     # Available as /commit everywhere
-  hooks/                          # Global hooks
-    pre_tool_use_safety.py
-  projects/                       # Auto memory (one directory per git repo)
-    <project>/memory/
-      MEMORY.md                   # Index — first 200 lines loaded every session
-      *.md                        # Topic files — read on demand
-  scheduled-tasks/                # Desktop scheduled tasks (Desktop app only)
-    <task-name>/SKILL.md
+The most common misconception about Claude Code is that performance is determined by the model. In practice, the ecosystem built around the model — the **harness** — determines outcomes more than the model alone.
 
-your-project/
-  CLAUDE.md                       # Project instructions for Claude
-  .claude/                        # Project-level config
-    settings.json                 # Overrides global settings for this project
-    commands/                     # Project-specific slash commands
-    hooks/                        # Project-specific hooks
-```
+The harness has five extension points plus two additional capabilities. Build them in order: each layer builds on what came before.
+
+| Component | What it does | When it loads | Common mistake |
+|:---|:---|:---|:---|
+| **CLAUDE.md files** | Context Claude reads at session start | Every session, automatically | Letting it become a dumping ground — it should be pointers and critical gotchas only |
+| **Hooks** | Scripts that run before/after tool events | On matching tool events | Using hooks only to block bad actions, not to propose CLAUDE.md updates or load dynamic context |
+| **Skills** | On-demand expertise that loads only when relevant | When task matches skill description | Loading all expertise into CLAUDE.md instead — skills exist specifically to avoid that |
+| **Plugins** | Bundles of skills, hooks, and MCP config, distributable across a team | When installed and enabled | Keeping good setups tribal — what works for one engineer should reach everyone |
+| **MCP servers** | Connections to internal tools, data sources, and APIs Claude can't otherwise reach | Per session, based on configuration | Adding MCP before the simpler layers are solid |
+| **LSP integrations** | Symbol-level code navigation matching what a developer sees in their IDE | When Claude navigates code | Skipping LSP in compiled-language codebases where grep returns thousands of false matches |
+| **Subagents** | Isolated Claude instances that take a task, do the work, and return only the result | On demand | Reaching for subagents before the rest of the harness is in place |
 
 ---
 
-## Sections
+## Build sequence
 
-**Configuration and Templates**
-- [CLAUDE.md Templates](CLAUDE_md_templates/) — Instructions Claude reads before every session
-- [Settings](settings/) — Model selection, permissions, environment variables
-  - [Auto Mode](settings/auto_mode.md) — Auto-approve safe commands; reduce prompts with `/fewer-permission-prompts`
-  - [Effort Levels](settings/effort_levels.md) — Tune Opus 4.7's adaptive thinking with `/effort`
-  - [Recaps and Focus Mode](settings/recaps_and_focus.md) — Summaries after long tasks; hide intermediate output with `/focus`
-- [Keybindings](keybindings/) — Custom keyboard shortcuts
-- [Hooks](hooks/) — Scripts that run before/after tool use
-- [Slash Commands](slash_commands/) — Custom `/commands` for repeated workflows
-  - [/go](slash_commands/go.md) — Test, simplify, and open a PR in one shot
+The order matters. A harness built out of sequence leaves each layer weaker.
 
-**Feature Guides**
-- [Channels](channels/) — React to external events inside a running session
-- [Dispatch](dispatch/) — Delegate tasks from your phone and trigger Claude Code via webhooks
-- [Scheduled Tasks](scheduled_tasks/) — Automate recurring work on a schedule (local/Desktop)
-- [Remote Control](remote_control/) — Access your local session from any device
-- [Memory](memory/) — How Claude remembers your project across sessions
-- [Code Review + Auto-fix](code_review/) — Multi-agent PR analysis and automated CI/review response
-- [Routines](routines/) — Cloud-based automation on schedule, API trigger, or GitHub events
-- [Agent Teams](agent_teams/) — Coordinate multiple Claude Code instances with the Advisor strategy (Opus/Sonnet/Haiku)
-- [Managed Agents API](managed_agents/) — Orientation to sessions, outcomes, dreams, and webhooks for production agent deployment
+1. **CLAUDE.md first** — Claude needs codebase knowledge before anything else works well. Start at the root, add subdirectory files as you go deeper.
+2. **Hooks second** — Once Claude is navigating correctly, hooks make the setup self-correcting. A stop hook that proposes CLAUDE.md updates compounds every session.
+3. **Skills third** — Move specialized knowledge and procedures out of CLAUDE.md and into skills that load only when needed.
+4. **Plugins fourth** — Package what works into a distributable form so it reaches every engineer automatically.
+5. **MCP + LSP last** — Connect Claude to internal tools and give it symbol-level navigation once the foundation is solid.
 
-> **Migrating from another AI coding tool?** Anthropic's [Import memory](https://claude.ai) feature on claude.ai lets you export memory from ChatGPT, Gemini, or Copilot and bring it into Claude. For Claude Code specifically, the right home for that context is your `~/.claude/CLAUDE.md` — your personal instructions file that applies across all projects. See [Memory](memory/) for how the two memory systems work.
+### Why this order?
+
+It's easy to focus on *what* to include and lose sight of *how and when the model actually uses it*. The sequence follows the model's behavior, not your preferences as a configurator:
+
+- **Hooks are the on/off switches.** They control what Claude can and can't do. Those boundaries need to be in place before you add complexity on top of them.
+- **Skills load progressively.** There's no point packaging specialized expertise until you know what expertise is actually needed session to session. Build the skill when the pattern repeats, not in anticipation of it.
+- **Plugins deliver what isn't native.** A plugin is a wrapper around things you've already proven work. Packaging unproven config just distributes the problem.
+- **MCP + LSP last** means the model isn't navigating a laundry list of connectors and servers at the start of every task. A lean, well-structured harness first — connections to the outside world after.
 
 ---
 
-## Philosophy
+## Getting started checklist
 
-Claude Code's power is mostly configuration, not code. The right `CLAUDE.md` prevents the most common mistakes. The right hooks enforce the guardrails your team needs. Slash commands turn your most-used workflows into one keystroke.
+### Foundation
+- [ ] Write a root CLAUDE.md covering project structure, key conventions, and critical gotchas
+- [ ] Add subdirectory CLAUDE.md files for modules with their own conventions or build commands
+- [ ] Add `.claude/settings.json` with `permissions.deny` rules to exclude generated files and build artifacts
+- [ ] Verify Claude can find, read, and build the right things before going further
 
-The features added in v1.1.0 extend this idea further. Channels, Scheduled Tasks, Remote Control, and Auto Memory don't change what Claude Code is — they change when and where it works. Claude Code is no longer only a tool you invoke. It can watch for events, run on a schedule, stay reachable from your phone, and learn from your corrections over time.
+### Hooks
+- [ ] Add a stop hook that reflects on the session and proposes CLAUDE.md updates
+- [ ] Add a start hook for any context that varies by developer or module
+- [ ] Wire lint and formatting checks as hooks (deterministic enforcement beats instructions)
 
-Dispatch completes that picture. With Dispatch, you don't need to be at your desk to assign work. Send a task from your phone, walk away, and come back to results. Pair it with Channels for webhook and chat app triggers, and Claude Code becomes something closer to a background agent than a coding assistant — one you can reach from anywhere and hand off work to at any hour. The configuration layer got bigger. The principle stayed the same.
+### Skills and plugins
+- [ ] Identify procedures that recur across sessions and move them to skills
+- [ ] Scope skills to the paths where they apply
+- [ ] Package org-wide skills into a plugin and distribute it through your marketplace
 
-Opus 4.7 shifts the balance further toward autonomy. Auto mode replaces permission babysitting with a model-based safety classifier. Effort levels replace manual thinking-budget tuning with a single dial. Focus mode and Recaps let you step away from long tasks and return to a clean summary. The `/go` skill closes the loop: test, simplify, ship. The principle is the same as always — configuration over code — but the ceiling on what you can hand off keeps rising.
+### Navigation
+- [ ] Install a code intelligence plugin for your primary language(s)
+- [ ] Install the corresponding language server binary
+- [ ] Verify Claude uses symbol lookup rather than grep for common function lookups
 
-v2.0.0 extends the field guide into the GitHub loop and the cloud. Code Review and Auto-fix bring Claude into the PR lifecycle — not just writing code but analyzing it before merge and watching it after, responding to CI failures and reviewer comments autonomously. Routines push the "works when your laptop is closed" idea to its logical conclusion: fully cloud-based automation triggered by a schedule, an API call, or a GitHub event, with no local process required. Agent Teams introduce collaborative multi-agent work with the Advisor strategy — Opus at the top making judgment calls, Sonnet handling implementation, Haiku handling tools — a tiered model configuration that balances capability and cost. And the Managed Agents API section orients practitioners toward Anthropic's production-grade agent layer, where sessions, outcomes, dreams, and webhooks give you programmatic control over agents you're building into products rather than using yourself.
-
-The ceiling keeps rising. The principle stays the same.
-
-This repo is the copy-paste layer between the course and your real projects.
+### Organization
+- [ ] Assign a DRI or team responsible for the Claude Code configuration
+- [ ] Document which plugins and skills are approved for use
+- [ ] Establish a review process for AI-generated code changes
+- [ ] Schedule a configuration review for three months out
 
 ---
 
-*v2.0.0 2026-05-15*
-Written by Claude Code in collaboration with ArchieCur and Sonnet 4.6
+## What's in this folder
+
+| File | Covers |
+|:---|:---|
+| [claude_md_at_scale.md](claude_md_at_scale.md) | Layered CLAUDE.md hierarchies, lean root files, subdirectory scoping, codebase maps |
+| [skills_and_plugins.md](skills_and_plugins.md) | Progressive disclosure with skills, path-scoped skills, packaging and distributing plugins |
+| [lsp_integrations.md](lsp_integrations.md) | Symbol-level navigation, language server setup, when LSP matters most |
+| [maintenance_and_governance.md](maintenance_and_governance.md) | CLAUDE.md review cadence, ownership models, governance for regulated industries |
+
+---
+
+## Related
+
+- [hooks/README.md](../hooks/README.md) — Hook scripts for automation and enforcement
+- [CLAUDE_md_templates/](../CLAUDE_md_templates/) — Starting templates for CLAUDE.md
+- [agent_teams/README.md](../agent_teams/README.md) — Coordinating multiple Claude instances
+- [Anthropic blog: How Claude Code works in large codebases](https://claude.com/blog/how-claude-code-works-in-large-codebases)
