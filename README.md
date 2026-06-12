@@ -34,6 +34,34 @@ Companion to the [Claude Code course on deeplearning.ai](https://www.deeplearnin
 | `agent_teams/` | Coordinate multiple Claude Code instances with shared tasks and inter-agent messaging | Enable with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json |
 | `managed_agents/` | Managed Agents API orientation — multi-agent sessions, outcomes, dreams, and webhooks for production deployments | Anthropic API with `managed-agents-2026-04-01` beta header |
 | `enterprise/` | Large codebase and enterprise deployment patterns — harness build sequence, CLAUDE.md at scale, skills and plugins, LSP integrations, maintenance and governance | Apply patterns in your project's `.claude/` and root CLAUDE.md |
+| `dynamic_workflows/` | Script-driven orchestration of dozens to hundreds of subagents — codebase audits, large migrations, cross-checked research, and repeatable orchestration patterns | `.claude/workflows/` (project) or `~/.claude/workflows/` (personal) |
+| `worktrees/` | Git worktree isolation for parallel sessions — `--worktree` flag, `.worktreeinclude` for env files, subagent isolation, and cleanup | `.claude/worktrees/` under your project root |
+| `Claude_Code_Desktop/` | Claude Code in the desktop app — parallel sessions, diff review, app preview, computer use, cloud and SSH sessions, Dispatch, and enterprise configuration | Desktop app settings + `.claude/launch.json` for preview servers |
+
+---
+
+## Run Agents in Parallel
+
+Claude Code can parallelize work in four main ways. The right one depends on who coordinates the work, whether workers need to communicate, and whether they edit the same files.
+
+| Approach | What it gives you | Use it when |
+|:---|:---|:---|
+| [Subagents](https://code.claude.com/docs/en/sub-agents.md) | Delegated workers inside one session that do a side task in their own context and return a summary | A side task would flood your main conversation with results you won't reference again |
+| [Agent view](https://code.claude.com/docs/en/agent-view.md) | One screen to dispatch and monitor sessions running in the background, opened with `claude agents` | You have several independent tasks to hand off and want to check status at a glance |
+| [Agent teams](agent_teams/) | Multiple coordinated sessions with a shared task list and inter-agent messaging, managed by a lead | You want Claude to split a project into pieces, assign them, and keep the workers in sync |
+| [Dynamic workflows](dynamic_workflows/) | A script that runs many subagents and cross-checks their results, for work too big to coordinate one turn at a time | A job outgrows a handful of subagents, or you want findings verified against each other: a codebase-wide audit, a 500-file migration, cross-checked research |
+
+Two supporting tools work across all approaches:
+
+- [Worktrees](worktrees/) give each session a separate git checkout so parallel sessions never edit the same files. Agent view moves each dispatched session into its own worktree automatically. Subagents can each get one too.
+- `/batch` is a skill that has Claude split one large change into 5–30 worktree-isolated subagents that each open a pull request. It's a packaged use of subagents and worktrees, not a separate coordination style.
+
+**Choosing an approach:**
+- Who coordinates the work? Claude inside one conversation → subagents. You hand off and check back → agent view. Claude plans and supervises peers → agent teams. A script holds the plan → dynamic workflows.
+- Do workers need to talk to each other? Subagents and agent view sessions report only results. Agent teammates share a task list and message each other directly. Workflow agents don't communicate — results flow through script variables.
+- Do tasks touch the same files? Use [worktrees](worktrees/) to isolate. Agent teams don't auto-isolate teammates, so partition work so each teammate owns different files.
+
+Running several sessions or subagents at once multiplies token usage. See [Costs](https://code.claude.com/docs/en/costs.md) for usage and rate-limit details.
 
 ---
 
@@ -47,6 +75,8 @@ Companion to the [Claude Code course on deeplearning.ai](https://www.deeplearnin
     commit.md                     # Available as /commit everywhere
   hooks/                          # Global hooks
     pre_tool_use_safety.py
+  workflows/                      # Saved dynamic workflow scripts (personal)
+    deep-audit.js                 # Available as /deep-audit in every project
   projects/                       # Auto memory (one directory per git repo)
     <project>/memory/
       MEMORY.md                   # Index — first 200 lines loaded every session
@@ -60,6 +90,9 @@ your-project/
     settings.json                 # Overrides global settings for this project
     commands/                     # Project-specific slash commands
     hooks/                        # Project-specific hooks
+    workflows/                    # Saved dynamic workflow scripts (shared with team)
+    worktrees/                    # Isolated git worktrees for parallel sessions
+    launch.json                   # Preview server config for Desktop app
 ```
 
 ---
@@ -88,6 +121,9 @@ your-project/
 - [Agent Teams](agent_teams/) — Coordinate multiple Claude Code instances with the Advisor strategy (Opus/Sonnet/Haiku)
 - [Managed Agents API](managed_agents/) — Orientation to sessions, outcomes, dreams, and webhooks for production agent deployment
 - [Enterprise & Large Codebase Guide](enterprise/) — Harness build sequence, CLAUDE.md at scale, skills and plugins, LSP integrations, and governance for large teams
+- [Dynamic Workflows](dynamic_workflows/) — Script-driven orchestration of subagents at scale; `ultracode`, `/deep-research`, and saved workflow commands
+- [Worktrees](worktrees/) — Git isolation for parallel sessions; `--worktree` flag, subagent isolation, and `.worktreeinclude`
+- [Claude Code Desktop](Claude_Code_Desktop/) — The desktop app: parallel sessions, diff review, app preview, computer use, cloud and SSH sessions
 
 > **Migrating from another AI coding tool?** Anthropic's [Import memory](https://claude.ai) feature on claude.ai lets you export memory from ChatGPT, Gemini, or Copilot and bring it into Claude. For Claude Code specifically, the right home for that context is your `~/.claude/CLAUDE.md` — your personal instructions file that applies across all projects. See [Memory](memory/) for how the two memory systems work.
 
@@ -109,8 +145,12 @@ The ceiling keeps rising. The principle stays the same.
 
 v2.1.0 brings the field guide to enterprise scale. The central thesis, drawn from Anthropic's Applied AI team's observations across large deployments, is that the harness matters more than the model. Two teams with identical model access but different harness configurations produce dramatically different results. The enterprise section makes this concrete: a build sequence that follows the model's own behavior (CLAUDE.md before hooks, skills before plugins, connectors last), layered CLAUDE.md hierarchies that load the right context without bloating every session, skills and plugins that turn tribal knowledge into distributed infrastructure, and LSP integrations that give Claude symbol-level navigation where text search fails at scale. At enterprise scale, configuration becomes organizational — the right harness isn't just files you write, it's a living system a team owns, reviews on a cadence, and governs deliberately. Cross-functional working groups, designated ownership, and AI code review policies aren't bureaucracy. They're the harness applied to the human layer. The ceiling keeps rising. The principle stays the same.
 
+v2.2.0 extends Claude Code from a tool you run into an orchestrator you design. Dynamic workflows move the plan into code: instead of Claude deciding turn by turn what to spawn next, a JavaScript script holds the loop, the branching, and the intermediate results. A single run can drive hundreds of agents, resume after interruption, and apply a repeatable quality pattern — independent agents adversarially reviewing each other's findings, or drafting a plan from several angles before you commit to one. Worktrees get their own section because they're no longer a footnote to parallel sessions: they're the isolation primitive that makes every parallel approach safe, and worth understanding on their own terms. The Desktop app gets a full field guide entry because it's a different surface, not just a window on the CLI — parallel sessions with automatic worktrees, visual diff review with inline commenting, an embedded browser that verifies changes after every edit, computer use for anything without an API, and cloud sessions that keep running after you close your laptop. Across all three additions, the same principle holds: the ceiling keeps rising because the configuration space keeps growing. The orchestration itself is now configurable. Design it deliberately.
+
 ---
 
-*v2.1.0 2026-05-17*
+*v2.2.0 2026-06-12*
 Written by Claude Code in collaboration with ArchieCur and Sonnet 4.6
 *Enterprise section developed from Anthropic Applied AI team, "How Claude Code works in large codebases" (May 2026)*
+
+---
