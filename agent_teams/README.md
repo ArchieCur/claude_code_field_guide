@@ -5,6 +5,8 @@
 
 Coordinate multiple Claude Code instances working together. One session acts as the team lead — it creates tasks, assigns work, and synthesizes results. Teammates each run in their own context window and can message each other directly.
 
+For a full comparison of all parallel agent approaches — subagents, agent view, agent teams, dynamic workflows, and worktrees — see [Run Agents in Parallel](../README.md#run-agents-in-parallel).
+
 ---
 
 ## Enable agent teams
@@ -34,14 +36,17 @@ Agent teams shine when **parallel exploration adds real value**:
 
 **Skip agent teams when:** tasks are sequential, teammates would edit the same files, or coordination overhead outweighs the parallel benefit. A single session or subagents handle those better.
 
-### Agent teams vs. subagents
+### Agent teams vs. subagents vs. dynamic workflows
 
-| | Subagents | Agent teams |
-|:--|:--|:--|
-| **Communication** | Report results back to main agent only | Teammates message each other directly |
-| **Coordination** | Main agent manages all work | Shared task list with self-coordination |
-| **Best for** | Focused tasks where only the result matters | Complex work requiring discussion and collaboration |
-| **Token cost** | Lower — results summarized back | Higher — each teammate is a separate Claude instance |
+| | Subagents | Agent teams | Dynamic workflows |
+|:--|:--|:--|:--|
+| **Communication** | Report results back to main agent only | Teammates message each other directly | Agents don't communicate; results go into script variables |
+| **Coordination** | Main agent manages all work | Shared task list with self-coordination | The script holds the plan |
+| **Scale** | A few delegated tasks per turn | A handful of long-running peers | Dozens to hundreds of agents per run |
+| **What's repeatable** | The worker definition | The team definition | The orchestration script itself |
+| **Best for** | Focused tasks where only the result matters | Complex work requiring discussion and collaboration | Large-scale tasks needing repeatable, verifiable orchestration |
+
+**Choose dynamic workflows over agent teams when:** scale exceeds a handful of peers, you want the orchestration codified as a script you can read and rerun, or you need independent agents to cross-check each other's findings. See the [Dynamic Workflows](../dynamic_workflows/) folder.
 
 ---
 
@@ -183,12 +188,15 @@ Wait for your teammates to complete their tasks before proceeding.
 - Maximum 25 concurrent threads per session
 - No nested teams — teammates can't spawn their own teams
 - Split-pane mode doesn't work in VS Code integrated terminal, Windows Terminal, or Ghostty
+- Agent teams are not available in the Desktop app — use [dynamic workflows](../dynamic_workflows/) for multi-agent work in Desktop
 
 ---
 
 ## Related resources
 
 - [Agent teams docs](https://code.claude.com/docs/en/agent-teams.md)
+- [Run agents in parallel](../README.md#run-agents-in-parallel) — compare all parallel approaches
+- [Dynamic workflows](../dynamic_workflows/) — script-driven orchestration at scale; better suited when scale exceeds a handful of teammates
 - [Subagents](https://code.claude.com/docs/en/sub-agents.md) — lighter-weight delegation within a single session
-- [Worktrees](https://code.claude.com/docs/en/worktrees.md) — manual parallel sessions without automated coordination
+- [Worktrees](../worktrees/) — file isolation for parallel sessions
 - [Agent view](https://code.claude.com/docs/en/agent-view.md) — monitor background agents from one place
