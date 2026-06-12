@@ -49,7 +49,7 @@ Claude Code can parallelize work in four main ways. The right one depends on who
 | [Subagents](https://code.claude.com/docs/en/sub-agents.md) | Delegated workers inside one session that do a side task in their own context and return a summary | A side task would flood your main conversation with results you won't reference again |
 | [Agent view](https://code.claude.com/docs/en/agent-view.md) | One screen to dispatch and monitor sessions running in the background, opened with `claude agents` | You have several independent tasks to hand off and want to check status at a glance |
 | [Agent teams](agent_teams/) | Multiple coordinated sessions with a shared task list and inter-agent messaging, managed by a lead | You want Claude to split a project into pieces, assign them, and keep the workers in sync |
-| [Dynamic workflows](dynamic_workflows/) | A script that runs many subagents and cross-checks their results, for work too big to coordinate one turn at a time | A job outgrows a handful of subagents, or you want findings verified against each other: a codebase-wide audit, a 500-file migration, cross-checked research |
+| [Dynamic workflows](Dynamic_Workflows) | A script that runs many subagents and cross-checks their results, for work too big to coordinate one turn at a time | A job outgrows a handful of subagents, or you want findings verified against each other: a codebase-wide audit, a 500-file migration, cross-checked research |
 
 Two supporting tools work across all approaches:
 
