@@ -1,0 +1,67 @@
+// .claude/launch.json — Preview server configuration for Claude Code Desktop
+// Place this file at <project-root>/.claude/launch.json
+// Supports JSON with comments (JSONC)
+
+{
+  "version": "0.0.1",
+
+  // autoVerify: after every file edit, Claude takes screenshots, checks for errors,
+  // and iterates before completing its response. On by default; disable here or
+  // toggle from the Preview dropdown in the session toolbar.
+  "autoVerify": true,
+
+  "configurations": [
+
+    // ── Single app (npm) ──────────────────────────────────────────────────────
+    // Most common setup. Claude detects this automatically for most projects;
+    // add the file manually only if you need to override the detected config.
+    {
+      "name": "web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000
+    }
+
+    // ── Single app (yarn) ─────────────────────────────────────────────────────
+    // {
+    //   "name": "web",
+    //   "runtimeExecutable": "yarn",
+    //   "runtimeArgs": ["dev"],
+    //   "port": 3000
+    // }
+
+    // ── Monorepo: frontend + API ──────────────────────────────────────────────
+    // Define multiple configurations to run different servers from the same project.
+    // autoPort: true  → Claude picks a free port if the preferred one is taken
+    // autoPort: false → Claude fails with an error (use for OAuth callbacks / CORS)
+    // autoPort absent → Claude asks once and saves your answer
+    // {
+    //   "name": "frontend",
+    //   "runtimeExecutable": "npm",
+    //   "runtimeArgs": ["run", "dev"],
+    //   "cwd": "apps/web",        // relative to project root
+    //   "port": 3000,
+    //   "autoPort": true
+    // },
+    // {
+    //   "name": "api",
+    //   "runtimeExecutable": "npm",
+    //   "runtimeArgs": ["run", "start"],
+    //   "cwd": "server",
+    //   "port": 8080,
+    //   "env": { "NODE_ENV": "development" },  // don't put secrets here — use the local env editor
+    //   "autoPort": false
+    // }
+
+    // ── Node.js script (no package manager) ───────────────────────────────────
+    // Use `program` + `args` when running a script directly with node.
+    // Use `runtimeExecutable` + `runtimeArgs` when going through a package manager.
+    // {
+    //   "name": "server",
+    //   "program": "server.js",   // runs: node server.js --verbose
+    //   "args": ["--verbose"],
+    //   "port": 4000
+    // }
+
+  ]
+}
