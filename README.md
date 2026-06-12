@@ -59,7 +59,7 @@ Two supporting tools work across all approaches:
 **Choosing an approach:**
 - Who coordinates the work? Claude inside one conversation → subagents. You hand off and check back → agent view. Claude plans and supervises peers → agent teams. A script holds the plan → dynamic workflows.
 - Do workers need to talk to each other? Subagents and agent view sessions report only results. Agent teammates share a task list and message each other directly. Workflow agents don't communicate — results flow through script variables.
-- Do tasks touch the same files? Use [worktrees](worktrees/) to isolate. Agent teams don't auto-isolate teammates, so partition work so each teammate owns different files.
+- Do tasks touch the same files? Use [worktrees](Worktrees) to isolate. Agent teams don't auto-isolate teammates, so partition work so each teammate owns different files.
 
 Running several sessions or subagents at once multiplies token usage. See [Costs](https://code.claude.com/docs/en/costs.md) for usage and rate-limit details.
 
