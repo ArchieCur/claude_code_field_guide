@@ -35,7 +35,7 @@ Companion to the [Claude Code course on deeplearning.ai](https://www.deeplearnin
 | `managed_agents/` | Managed Agents API orientation — multi-agent sessions, outcomes, dreams, and webhooks for production deployments | Anthropic API with `managed-agents-2026-04-01` beta header |
 | `enterprise/` | Large codebase and enterprise deployment patterns — harness build sequence, CLAUDE.md at scale, skills and plugins, LSP integrations, maintenance and governance | Apply patterns in your project's `.claude/` and root CLAUDE.md |
 | `dynamic_workflows/` | Script-driven orchestration of dozens to hundreds of subagents — codebase audits, large migrations, cross-checked research, and repeatable orchestration patterns | `.claude/workflows/` (project) or `~/.claude/workflows/` (personal) |
-| `worktrees/` | Git worktree isolation for parallel sessions — `--worktree` flag, `.worktreeinclude` for env files, subagent isolation, and cleanup | `.claude/worktrees/` under your project root |
+| `Worktrees/` | Git worktree isolation for parallel sessions — `--worktree` flag, `.worktreeinclude` for env files, subagent isolation, and cleanup | `.claude/worktrees/` under your project root |
 | `Claude_Code_Desktop/` | Claude Code in the desktop app — parallel sessions, diff review, app preview, computer use, cloud and SSH sessions, Dispatch, and enterprise configuration | Desktop app settings + `.claude/launch.json` for preview servers |
 
 ---
