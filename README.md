@@ -53,7 +53,7 @@ Claude Code can parallelize work in four main ways. The right one depends on who
 
 Two supporting tools work across all approaches:
 
-- [Worktrees](worktrees/) give each session a separate git checkout so parallel sessions never edit the same files. Agent view moves each dispatched session into its own worktree automatically. Subagents can each get one too.
+- [Worktrees](Worktrees) give each session a separate git checkout so parallel sessions never edit the same files. Agent view moves each dispatched session into its own worktree automatically. Subagents can each get one too.
 - `/batch` is a skill that has Claude split one large change into 5–30 worktree-isolated subagents that each open a pull request. It's a packaged use of subagents and worktrees, not a separate coordination style.
 
 **Choosing an approach:**
