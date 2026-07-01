@@ -33,7 +33,7 @@ Companion to the [Claude Code course on deeplearning.ai](https://www.deeplearnin
 | `routines/` | Cloud-based automation triggered by schedule, API call, or GitHub events — runs when your laptop is closed | Managed at [claude.ai/code/routines](https://claude.ai/code/routines) or `/schedule` in the CLI |
 | `agent_teams/` | Coordinate multiple Claude Code instances with shared tasks and inter-agent messaging | Enable with `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in settings.json |
 | `managed_agents/` | Managed Agents API orientation — multi-agent sessions, outcomes, dreams, and webhooks for production deployments | Anthropic API with `managed-agents-2026-04-01` beta header |
-| `enterprise/` | Large codebase and enterprise deployment patterns — harness build sequence, CLAUDE.md at scale, skills and plugins, LSP integrations, maintenance and governance | Apply patterns in your project's `.claude/` and root CLAUDE.md |
+| `enterprise/` | Large codebase and enterprise deployment patterns — harness build sequence, CLAUDE.md at scale, skills and plugins, LSP integrations, gateway setup, maintenance and governance | Apply patterns in your project's `.claude/` and root CLAUDE.md |
 | `dynamic_workflows/` | Script-driven orchestration of dozens to hundreds of subagents — codebase audits, large migrations, cross-checked research, and repeatable orchestration patterns | `.claude/workflows/` (project) or `~/.claude/workflows/` (personal) |
 | `worktrees/` | Git worktree isolation for parallel sessions — `--worktree` flag, `.worktreeinclude` for env files, subagent isolation, and cleanup | `.claude/worktrees/` under your project root |
 | `Claude_Code_Desktop/` | Claude Code in the desktop app — parallel sessions, diff review, app preview, computer use, cloud and SSH sessions, Dispatch, and enterprise configuration | Desktop app settings + `.claude/launch.json` for preview servers |
@@ -120,7 +120,7 @@ your-project/
 - [Routines](routines/) — Cloud-based automation on schedule, API trigger, or GitHub events
 - [Agent Teams](agent_teams/) — Coordinate multiple Claude Code instances with the Advisor strategy (Opus/Sonnet/Haiku)
 - [Managed Agents API](managed_agents/) — Orientation to sessions, outcomes, dreams, and webhooks for production agent deployment
-- [Enterprise & Large Codebase Guide](enterprise/) — Harness build sequence, CLAUDE.md at scale, skills and plugins, LSP integrations, and governance for large teams
+- [Enterprise & Large Codebase Guide](enterprise/) — Harness build sequence, CLAUDE.md at scale, skills and plugins, LSP integrations, gateway setup, and governance for large teams
 - [Dynamic Workflows](Dynamic_Workflows) — Script-driven orchestration of subagents at scale; `ultracode`, `/deep-research`, and saved workflow commands
 - [Worktrees](Worktrees) — Git isolation for parallel sessions; `--worktree` flag, subagent isolation, and `.worktreeinclude`
 - [Claude Code Desktop](Claude_Code_Desktop/) — The desktop app: parallel sessions, diff review, app preview, computer use, cloud and SSH sessions

@@ -10,7 +10,7 @@ This section covers the patterns that work at scale, drawn from Anthropic's Appl
 
 The most common misconception about Claude Code is that performance is determined by the model. In practice, the ecosystem built around the model — the **harness** — determines outcomes more than the model alone.
 
-The harness has five extension points plus two additional capabilities. Build them in order: each layer builds on what came before.
+The harness has six extension points plus two additional capabilities. Build them in order: each layer builds on what came before.
 
 | Component | What it does | When it loads | Common mistake |
 |:---|:---|:---|:---|
@@ -19,6 +19,7 @@ The harness has five extension points plus two additional capabilities. Build th
 | **Skills** | On-demand expertise that loads only when relevant | When task matches skill description | Loading all expertise into CLAUDE.md instead — skills exist specifically to avoid that |
 | **Plugins** | Bundles of skills, hooks, and MCP config, distributable across a team | When installed and enabled | Keeping good setups tribal — what works for one engineer should reach everyone |
 | **MCP servers** | Connections to internal tools, data sources, and APIs Claude can't otherwise reach | Per session, based on configuration | Adding MCP before the simpler layers are solid |
+| **Gateway** | Routes all Claude Code API traffic through a self-hosted proxy; handles centralized credentials, usage tracking, budgets, and audit logging without touching developer machines | Org/IT deployment, before developer onboarding | Treating gateway as optional infrastructure — in regulated or multi-team environments it is the prerequisite, not an add-on |
 | **LSP integrations** | Symbol-level code navigation matching what a developer sees in their IDE | When Claude navigates code | Skipping LSP in compiled-language codebases where grep returns thousands of false matches |
 | **Subagents** | Isolated Claude instances that take a task, do the work, and return only the result | On demand | Reaching for subagents before the rest of the harness is in place |
 
@@ -28,6 +29,7 @@ The harness has five extension points plus two additional capabilities. Build th
 
 The order matters. A harness built out of sequence leaves each layer weaker.
 
+0. **Gateway first (enterprise/regulated environments)** — Before developers configure anything locally, the org needs a decision: direct API access or routed through a gateway. In multi-team or regulated environments, deploy Claude apps gateway or configure your existing LLM gateway before developer onboarding begins. Gateway deployment is an IT/infrastructure concern; once it's in place, developers authenticate to it and the rest of the harness builds on top of a controlled, auditable foundation.
 1. **CLAUDE.md first** — Claude needs codebase knowledge before anything else works well. Start at the root, add subdirectory files as you go deeper.
 2. **Hooks second** — Once Claude is navigating correctly, hooks make the setup self-correcting. A stop hook that proposes CLAUDE.md updates compounds every session.
 3. **Skills third** — Move specialized knowledge and procedures out of CLAUDE.md and into skills that load only when needed.
@@ -37,6 +39,8 @@ The order matters. A harness built out of sequence leaves each layer weaker.
 ### Why this order?
 
 It's easy to focus on *what* to include and lose sight of *how and when the model actually uses it*. The sequence follows the model's behavior, not your preferences as a configurator:
+
+> In enterprise environments, gateway deployment precedes all of this — it is the infrastructure layer everything else runs on.
 
 - **Hooks are the on/off switches.** They control what Claude can and can't do. Those boundaries need to be in place before you add complexity on top of them.
 - **Skills load progressively.** There's no point packaging specialized expertise until you know what expertise is actually needed session to session. Build the skill when the pattern repeats, not in anticipation of it.
@@ -73,6 +77,11 @@ It's easy to focus on *what* to include and lose sight of *how and when the mode
 - [ ] Document which plugins and skills are approved for use
 - [ ] Establish a review process for AI-generated code changes
 - [ ] Schedule a configuration review for three months out
+- [ ] Decide between Claude apps gateway (built into the `claude` binary, SSO/IdP, OTLP telemetry) and an existing LLM gateway your org already runs
+- [ ] Deploy gateway and configure IdP group-based model allowlists and managed settings
+- [ ] Configure OTLP telemetry export to your observability stack
+- [ ] Set CI pipelines to authenticate directly to your provider — gateway auth is browser SSO only and cannot authenticate headless pipelines
+- [ ] Communicate to developers that gateway credential turns off claude.ai subscription billing — all usage charges go to the org's API account
 
 ---
 
@@ -84,6 +93,7 @@ It's easy to focus on *what* to include and lose sight of *how and when the mode
 | [skills_and_plugins.md](skills_and_plugins.md) | Progressive disclosure with skills, path-scoped skills, packaging and distributing plugins |
 | [lsp_integrations.md](lsp_integrations.md) | Symbol-level navigation, language server setup, when LSP matters most |
 | [maintenance_and_governance.md](maintenance_and_governance.md) | CLAUDE.md review cadence, ownership models, governance for regulated industries |
+| [gateway.md](gateway.md) | Gateway architecture, Claude apps gateway vs third-party gateways, SSO and IdP group configuration, CI pipeline authentication, subscription billing behavior |
 
 ---
 

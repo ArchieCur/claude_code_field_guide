@@ -1,0 +1,6 @@
+# local handoff notes (kept locally as historical record, not for distribution)
+/handoffs
+
+# OS cruft
+.DS_Store
+Thumbs.db
