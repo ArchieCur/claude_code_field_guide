@@ -147,10 +147,13 @@ v2.1.0 brings the field guide to enterprise scale. The central thesis, drawn fro
 
 v2.2.0 extends Claude Code from a tool you run into an orchestrator you design. Dynamic workflows move the plan into code: instead of Claude deciding turn by turn what to spawn next, a JavaScript script holds the loop, the branching, and the intermediate results. A single run can drive hundreds of agents, resume after interruption, and apply a repeatable quality pattern — independent agents adversarially reviewing each other's findings, or drafting a plan from several angles before you commit to one. Worktrees get their own section because they're no longer a footnote to parallel sessions: they're the isolation primitive that makes every parallel approach safe, and worth understanding on their own terms. The Desktop app gets a full field guide entry because it's a different surface, not just a window on the CLI — parallel sessions with automatic worktrees, visual diff review with inline commenting, an embedded browser that verifies changes after every edit, computer use for anything without an API, and cloud sessions that keep running after you close your laptop. Across all three additions, the same principle holds: the ceiling keeps rising because the configuration space keeps growing. The orchestration itself is now configurable. Design it deliberately.
 
+v2.2.1 adds gateway setup to the enterprise section. A gateway sits between Claude Code and your model provider, giving developers SSO sign-in that routes to Bedrock, Google Cloud, Microsoft Foundry, or the Anthropic API, with credentials, budgets, and audit logging held centrally rather than on individual machines. It also changes billing: connecting through a gateway credential shifts usage from an individual's claude.ai subscription to the org's provider account at API rates — a detail worth surfacing to developers before rollout, not after. The principle stays the same: the harness matters more than the model, and for regulated or multi-team orgs, the gateway is the first layer of that harness.
+
 ---
 
-*v2.2.0 2026-06-12*
-Written by Claude Code in collaboration with ArchieCur and Sonnet 4.6
+*v2.2.1 2026-07-01*
+Gateway section written by Claude Code (Sonnet 5)
+Prior sections (through v2.2.0, 2026-06-12) written by Claude Code in collaboration with ArchieCur and Sonnet 4.6
 *Enterprise section developed from Anthropic Applied AI team, "How Claude Code works in large codebases" (May 2026)*
 
 ---
